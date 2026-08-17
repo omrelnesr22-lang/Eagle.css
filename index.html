@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EAGLE.CSS — دليل أساسيات CSS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0e141c;
+    --bg-panel:#161f2a;
+    --bg-panel-2:#1c2733;
+    --line: rgba(227,164,56,.14);
+    --gold:#e3a438;
+    --gold-dim:#c98d2b;
+    --teal:#39c2ac;
+    --coral:#e2665a;
+    --text:#eef1f4;
+    --muted:#93a3b2;
+    --mono: 'JetBrains Mono', monospace;
+    --disp: 'Cairo', sans-serif;
+    --body: 'IBM Plex Sans Arabic', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-deep);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.8;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 85% -5%, rgba(227,164,56,.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at -5% 30%, rgba(57,194,172,.09), transparent 60%);
+    pointer-events:none; z-index:0;
+  }
+
+  /* ---------- layout ---------- */
+  .shell{ display:flex; min-height:100vh; position:relative; z-index:1;}
+  .sidebar{
+    width:270px; flex-shrink:0;
+    background:linear-gradient(180deg, var(--bg-panel), var(--bg-deep));
+    border-left:1px solid var(--line);
+    padding:26px 18px; position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+  .brand svg{width:34px; height:34px; flex-shrink:0;}
+  .brand-name{font-family:var(--disp); font-weight:900; font-size:1.35rem; letter-spacing:.5px;}
+  .brand-name span{color:var(--gold);}
+  .brand-tag{font-size:.72rem; color:var(--muted); font-family:var(--mono); margin-bottom:26px; padding-right:44px;}
+
+  .navlist{list-style:none; display:flex; flex-direction:column; gap:2px;}
+  .navlist a{
+    display:flex; align-items:center; gap:10px;
+    color:var(--muted); text-decoration:none; font-size:.86rem;
+    padding:9px 10px; border-radius:8px; border-right:2px solid transparent;
+    transition:.15s;
+  }
+  .navlist a:hover{ background:var(--bg-panel-2); color:var(--text);}
+  .navlist a.active{ color:var(--gold); border-color:var(--gold); background:rgba(227,164,56,.07);}
+  .navlist .num{font-family:var(--mono); font-size:.7rem; color:var(--gold-dim); width:20px;}
+
+  .menu-toggle{
+    display:none; position:fixed; top:16px; left:16px; z-index:50;
+    background:var(--bg-panel-2); border:1px solid var(--line); color:var(--gold);
+    width:42px; height:42px; border-radius:10px; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+
+  main{flex:1; min-width:0; padding:48px 56px 100px;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    display:flex; align-items:center; justify-content:space-between; gap:40px;
+    padding-bottom:46px; margin-bottom:46px; border-bottom:1px solid var(--line); flex-wrap:wrap;
+  }
+  .hero h1{
+    font-family:var(--disp); font-weight:900; font-size:clamp(2rem,4vw,3.1rem);
+    line-height:1.2; margin-bottom:14px;
+  }
+  .hero h1 .accent{color:var(--gold);}
+  .hero p{color:var(--muted); max-width:520px; font-size:1rem;}
+  .hero-badges{display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;}
+  .badge{
+    font-family:var(--mono); font-size:.72rem; color:var(--teal);
+    border:1px solid rgba(57,194,172,.35); background:rgba(57,194,172,.08);
+    padding:5px 11px; border-radius:20px;
+  }
+  .eagle-mark{width:150px; height:150px; flex-shrink:0;}
+
+  section{ scroll-margin-top:24px; margin-bottom:64px;}
+  .sec-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:20px;}
+  .sec-num{font-family:var(--mono); color:var(--gold-dim); font-size:.85rem;}
+  .sec-head h2{font-family:var(--disp); font-weight:800; font-size:1.55rem;}
+  .sec-sub{color:var(--muted); font-size:.92rem; margin-bottom:22px; max-width:720px;}
+
+  .card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:14px;
+    padding:22px 24px;
+  }
+  .grid{ display:grid; gap:16px;}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  .grid-2{grid-template-columns:repeat(2,1fr);}
+  @media(max-width:900px){ .grid-3, .grid-2{grid-template-columns:1fr;} }
+
+  .card h3{font-family:var(--disp); font-size:1.05rem; margin-bottom:8px; color:var(--text);}
+  .card p{color:var(--muted); font-size:.9rem; margin-bottom:10px;}
+  .card ul{padding-right:18px; color:var(--muted); font-size:.87rem; display:flex; flex-direction:column; gap:5px;}
+
+  code, pre{font-family:var(--mono); direction:ltr; text-align:left;}
+  pre{
+    background:#0a1017; border:1px solid var(--line); border-radius:10px;
+    padding:14px 16px; overflow-x:auto; font-size:.83rem; margin-top:10px; line-height:1.6;
+  }
+  .tok-sel{color:var(--gold);}
+  .tok-prop{color:var(--teal);}
+  .tok-val{color:#f0a4a0;}
+  .tok-cmt{color:var(--muted);}
+  .tok-tag{color:#7fb8f0;}
+  .tok-str{color:var(--gold);}
+
+  .pill{
+    display:inline-block; font-family:var(--mono); font-size:.68rem;
+    background:var(--bg-panel-2); border:1px solid var(--line); color:var(--gold);
+    padding:2px 9px; border-radius:20px; margin-bottom:8px;
+  }
+
+  /* eagle talon divider */
+  .talon{ display:flex; align-items:center; gap:10px; margin:14px 0 26px; opacity:.6;}
+  .talon svg{width:16px; height:16px; color:var(--gold);}
+  .talon .line{flex:1; height:1px; background:linear-gradient(to left, var(--line), transparent);}
+
+  /* color swatches */
+  .swatch-row{display:flex; gap:14px; flex-wrap:wrap; margin-top:12px;}
+  .swatch{
+    width:110px; text-align:center; font-family:var(--mono); font-size:.72rem; color:var(--muted);
+  }
+  .swatch .box{ height:60px; border-radius:8px; margin-bottom:6px; border:1px solid var(--line);}
+
+  /* specificity pyramid - signature element */
+  .specificity-wrap{
+    display:flex; gap:34px; flex-wrap:wrap; align-items:center; margin-top:14px;
+  }
+  .pyramid{ display:flex; flex-direction:column; gap:6px; width:100%; max-width:340px;}
+  .prio{
+    padding:12px 16px; border-radius:8px; font-family:var(--mono); font-size:.82rem;
+    display:flex; justify-content:space-between; align-items:center; cursor:pointer;
+    border:1px solid var(--line); transition:.2s; background:var(--bg-panel-2);
+  }
+  .prio span.rank{color:var(--gold-dim); font-size:.7rem;}
+  .prio[data-level="1"]{width:100%;}
+  .prio[data-level="2"]{width:88%;}
+  .prio[data-level="3"]{width:76%;}
+  .prio[data-level="4"]{width:64%;}
+  .prio.win{ background:rgba(227,164,56,.14); border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset;}
+  .eagle-eye{
+    width:120px; height:120px; flex-shrink:0; position:relative;
+  }
+  .scope-hint{font-size:.78rem; color:var(--muted); margin-top:10px;}
+
+  /* box model interactive */
+  .boxmodel{ display:flex; gap:30px; flex-wrap:wrap; align-items:center; margin-top:10px;}
+  .bm-visual{
+    background:rgba(227,164,56,.10); border:1px dashed var(--gold-dim); border-radius:10px;
+    padding:22px; position:relative;
+  }
+  .bm-margin-label, .bm-padding-label, .bm-border-label{
+    position:absolute; font-family:var(--mono); font-size:.62rem; color:var(--gold-dim);
+    top:4px; right:10px;
+  }
+  .bm-border{ background:rgba(57,194,172,.14); border:1px solid var(--teal); border-radius:8px; padding:16px;}
+  .bm-padding{ background:rgba(226,102,90,.12); border:1px solid var(--coral); border-radius:6px; padding:14px;}
+  .bm-content{
+    background:var(--bg-deep); border:1px solid var(--line); border-radius:4px;
+    padding:20px 34px; font-family:var(--mono); font-size:.78rem; color:var(--text); text-align:center;
+  }
+  .bm-legend{display:flex; flex-direction:column; gap:8px; font-size:.83rem;}
+  .bm-legend .dot{width:10px; height:10px; border-radius:3px; display:inline-block; margin-left:8px;}
+
+  /* display types */
+  .disp-demo{display:flex; flex-direction:column; gap:6px; margin-top:10px;}
+  .disp-demo .box{ background:var(--gold); color:#0e141c; font-family:var(--mono); font-size:.7rem;
+    padding:6px 10px; border-radius:4px; font-weight:700;}
+  .disp-block .box{ display:block; width:100%;}
+  .disp-inline .box{ display:inline-block; width:auto; margin-left:4px;}
+  .disp-inlineblock .box{ display:inline-block; width:70px; text-align:center; margin-left:4px;}
+
+  /* link states demo */
+  .link-demo a{ color:var(--teal); font-family:var(--mono); font-size:.85rem; margin-left:16px; text-decoration:underline; text-underline-offset:3px;}
+  .link-demo a:hover{ color:var(--gold);}
+
+  footer{
+    border-top:1px solid var(--line); padding-top:24px; margin-top:20px;
+    color:var(--muted); font-size:.82rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+  footer .fmono{font-family:var(--mono); color:var(--gold-dim);}
+
+  @media(max-width:980px){
+    .sidebar{
+      position:fixed; right:0; top:0; z-index:40; transform:translateX(100%);
+      transition:transform .25s ease; box-shadow:-10px 0 30px rgba(0,0,0,.4);
+    }
+    .sidebar.open{ transform:translateX(0); }
+    .menu-toggle{ display:flex; }
+    main{ padding:80px 20px 60px; }
+    .hero{ flex-direction:column-reverse; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+</button>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 64 64" fill="none">
+        <path d="M32 6 L54 24 L46 24 L58 40 L40 34 L44 58 L32 44 L20 58 L24 34 L6 40 L18 24 L10 24 Z" fill="#e3a438"/>
+      </svg>
+      <div class="brand-name">EAGLE<span>.CSS</span></div>
+    </div>
+    <div class="brand-tag">دليل تفاعلي شامل</div>
+    <ul class="navlist" id="navlist">
+      <li><a href="#intro"><span class="num">01</span> مقدمة CSS</a></li>
+      <li><a href="#places"><span class="num">02</span> أماكن كتابة الكود</a></li>
+      <li><a href="#text"><span class="num">03</span> تنسيق النصوص</a></li>
+      <li><a href="#selectors"><span class="num">04</span> المحددات</a></li>
+      <li><a href="#colors"><span class="num">05</span> نظام الألوان</a></li>
+      <li><a href="#pseudoclass"><span class="num">06</span> العناصر الزائفة (:)</a></li>
+      <li><a href="#links"><span class="num">07</span> تنسيق الروابط</a></li>
+      <li><a href="#specificity"><span class="num">08</span> أولويات المحددات</a></li>
+      <li><a href="#boxmodel"><span class="num">09</span> نموذج الصندوق</a></li>
+      <li><a href="#spacing"><span class="num">10</span> Padding & Margin</a></li>
+      <li><a href="#display"><span class="num">11</span> أنواع العناصر</a></li>
+      <li><a href="#position"><span class="num">12</span> Position</a></li>
+      <li><a href="#pseudoelement"><span class="num">13</span> العناصر الزائفة (::)</a></li>
+      <li><a href="#rtl"><span class="num">14</span> النسخة العربية RTL</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <div class="hero">
+      <div>
+        <h1>خرائط <span class="accent">CSS</span><br>بعين النسر</h1>
+        <p>ملخص تفاعلي مبسّط لكل قواعد وأساسيات الـ CSS — من كتابة أول Selector إلى فهم Box Model وأولويات المحددات، في مكان واحد وبتصميم واضح على جميع الأجهزة.</p>
+        <div class="hero-badges">
+          <span class="badge">Selectors</span>
+          <span class="badge">Box Model</span>
+          <span class="badge">Specificity</span>
+          <span class="badge">RTL Ready</span>
+        </div>
+      </div>
+      <svg class="eagle-mark" viewBox="0 0 200 200" fill="none">
+        <circle cx="100" cy="100" r="96" stroke="#e3a438" stroke-opacity=".25" stroke-width="1"/>
+        <circle cx="100" cy="100" r="70" stroke="#39c2ac" stroke-opacity=".2" stroke-width="1"/>
+        <path d="M100 30 L150 90 L128 90 L166 140 L112 118 L120 170 L100 132 L80 170 L88 118 L34 140 L72 90 L50 90 Z" fill="#e3a438" fill-opacity=".85"/>
+      </svg>
+    </div>
+
+    <!-- 01 -->
+    <section id="intro">
+      <div class="sec-head"><span class="sec-num">01</span><h2>مقدمة إلى CSS</h2></div>
+      <div class="card">
+        <p style="color:var(--text); font-size:.95rem; margin-bottom:14px;">
+          CSS هي اختصار لـ <strong style="color:var(--gold)">Cascading Style Sheets</strong>، وتقوم بوصف طريقة عرض المحتوى والمظهر الخاص به: الخط، الألوان، ومكان العناصر في الصفحة. تتكوّن من <strong style="color:var(--teal)">Properties</strong> نُنسّق من خلالها الصفحة.
+        </p>
+        <pre><span class="tok-sel">h1</span> {
+  <span class="tok-prop">color</span>: <span class="tok-val">red</span>;
+  <span class="tok-prop">font-size</span>: <span class="tok-val">11px</span>;
+}
+<span class="tok-cmt">/* selector { property: value; declaration } */</span></pre>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section id="places">
+      <div class="sec-head"><span class="sec-num">02</span><h2>ثلاثة أماكن لكتابة كود CSS</h2></div>
+      <p class="sec-sub">لكل طريقة استخدام مختلف — من الأسرع للتجربة إلى الأفضل للمشاريع الكبيرة.</p>
+      <div class="grid grid-3">
+        <div class="card">
+          <span class="pill">الأقل تفضيلاً</span>
+          <h3>Inline CSS</h3>
+          <p>يُكتب داخل عنصر الـ HTML مباشرة، ما يجعل كود CSS مختلطًا بكود HTML في نفس السطر.</p>
+          <pre><span class="tok-tag">&lt;h1</span> <span class="tok-prop">style</span>=<span class="tok-str">"color:blue;font-size:30px;"</span><span class="tok-tag">&gt;</span>I Love Almdrasa<span class="tok-tag">&lt;/h1&gt;</span></pre>
+        </div>
+        <div class="card">
+          <span class="pill">داخل الصفحة</span>
+          <h3>Internal CSS</h3>
+          <p>يُكتب في نفس صفحة HTML، داخل وسم <code>&lt;style&gt;</code> بمنطقة الـ <code>head</code>.</p>
+          <pre><span class="tok-tag">&lt;style&gt;</span>
+  <span class="tok-sel">h1</span> {
+    <span class="tok-prop">color</span>: <span class="tok-val">blue</span>;
+    <span class="tok-prop">font-size</span>: <span class="tok-val">30px</span>;
+  }
+<span class="tok-tag">&lt;/style&gt;</span></pre>
+        </div>
+        <div class="card">
+          <span class="pill">الأفضل عمليًا</span>
+          <h3>External CSS</h3>
+          <p>يُكتب في ملف CSS منفصل، ويُربط بملف HTML عبر وسم <code>link</code>.</p>
+          <pre><span class="tok-tag">&lt;link</span> <span class="tok-prop">rel</span>=<span class="tok-str">"stylesheet"</span> <span class="tok-prop">href</span>=<span class="tok-str">"file_name.css"</span><span class="tok-tag">&gt;</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section id="text">
+      <div class="sec-head"><span class="sec-num">03</span><h2>تنسيق النص — Text Styling</h2></div>
+      <div class="grid grid-3">
+        <div class="card"><h3>font-size</h3><p>حجم النص.</p><pre><span class="tok-prop">font-size</span>: <span class="tok-val">10px</span>;</pre></div>
+        <div class="card"><h3>font-family</h3><p>نوع الخط المستخدم للنص.</p><pre><span class="tok-prop">font-family</span>: <span class="tok-val">Arial, Helvetica, sans-serif</span>;</pre></div>
+        <div class="card"><h3>text-transform</h3><p>تحويل النص لأحرف كبيرة أو صغيرة.</p><pre><span class="tok-prop">text-transform</span>: <span class="tok-val">uppercase</span>;</pre></div>
+        <div class="card"><h3>line-height</h3><p>تحديد المسافة بين الأسطر.</p><pre><span class="tok-prop">line-height</span>: <span class="tok-val">1.5</span>;</pre></div>
+        <div class="card"><h3>text-align</h3><p>تحديد اتجاه محاذاة النص.</p><pre><span class="tok-prop">text-align</span>: <span class="tok-val">center</span>;</pre></div>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section id="selectors">
+      <div class="sec-head"><span class="sec-num">04</span><h2>المحددات — Selectors</h2></div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>دمج المحددات — Combining Selectors</h3>
+          <p>عند تكرار نفس الخواص لأكثر من عنصر، نجمع المحددات ونفصل بينها بفاصلة بدلًا من التكرار.</p>
+          <pre><span class="tok-sel">h1, h2, h3</span> {
+  <span class="tok-prop">text-transform</span>: <span class="tok-val">uppercase</span>;
+  <span class="tok-prop">line-height</span>: <span class="tok-val">1.5</span>;
+  <span class="tok-prop">text-align</span>: <span class="tok-val">center</span>;
+}
+
+<span class="tok-cmt">/* h1 بداخل div معيّن فقط */</span>
+<span class="tok-sel">div h1</span> { <span class="tok-prop">color</span>: <span class="tok-val">red</span>; }</pre>
+        </div>
+        <div class="card">
+          <h3>Class و Id</h3>
+          <p>Class تُستخدم لأكثر من عنصر، ويمكن للعنصر حمل أكثر من class. أما Id فهو فريد لعنصر واحد فقط في الصفحة.</p>
+          <pre><span class="tok-cmt">/* Class → نقطة قبل الاسم */</span>
+<span class="tok-sel">.class_name</span> {
+  <span class="tok-prop">text-transform</span>: <span class="tok-val">uppercase</span>;
+}
+
+<span class="tok-cmt">/* Id → علامة # قبل الاسم */</span>
+<span class="tok-sel">#id_name</span> {
+  <span class="tok-prop">line-height</span>: <span class="tok-val">1.5</span>;
+}</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section id="colors">
+      <div class="sec-head"><span class="sec-num">05</span><h2>نظام الألوان</h2></div>
+      <p class="sec-sub">ثلاث طرق شائعة لتحديد الألوان في CSS.</p>
+      <div class="card">
+        <div class="grid grid-3">
+          <div>
+            <h3>RGB Model</h3>
+            <p>خليط من ثلاثة ألوان: أحمر، أخضر، أزرق — كل قناة من 0 إلى 255.</p>
+            <pre><span class="tok-prop">color</span>: <span class="tok-val">rgb(244, 179, 63)</span>;</pre>
+          </div>
+          <div>
+            <h3>RGBA</h3>
+            <p>نفس نظام RGB مع قناة رابعة لدرجة الشفافية (0 إلى 1).</p>
+            <pre><span class="tok-prop">color</span>: <span class="tok-val">rgba(0, 255, 255, 0.3)</span>;</pre>
+          </div>
+          <div>
+            <h3>Hexadecimal</h3>
+            <p>الأكثر استخدامًا لاختصاره — من 0 إلى FF لكل قناة لونية.</p>
+            <pre><span class="tok-prop">color</span>: <span class="tok-val">#00ffff</span>;</pre>
+          </div>
+        </div>
+        <div class="swatch-row" id="swatchRow"></div>
+      </div>
+    </section>
+
+    <!-- 06 -->
+    <section id="pseudoclass">
+      <div class="sec-head"><span class="sec-num">06</span><h2>العناصر الزائفة — Pseudo Classes</h2></div>
+      <p class="sec-sub">كلمات تُضاف إلى محدد لتحديد حالة خاصة للعنصر.</p>
+      <div class="grid grid-2">
+        <div class="card"><h3>first-child</h3><p>أول عنصر فرعي (child) من العنصر الأب (parent).</p><pre><span class="tok-sel">.element:first-child</span> { <span class="tok-prop">color</span>: <span class="tok-val">#fff</span>; }</pre></div>
+        <div class="card"><h3>last-child</h3><p>آخر عنصر فرعي من العنصر الأب.</p><pre><span class="tok-sel">.element:last-child</span> { <span class="tok-prop">color</span>: <span class="tok-val">#fff</span>; }</pre></div>
+        <div class="card"><h3>nth-child()</h3><p>تحديد العنصر برقم ترتيبه.</p><pre><span class="tok-sel">.element:nth-child(2)</span> { <span class="tok-prop">color</span>: <span class="tok-val">#fff</span>; }</pre></div>
+        <div class="card"><h3>first-of-type()</h3><p>أول عنصر من نوعه بين عناصر متشابهة.</p><pre><span class="tok-sel">p:first-of-type</span> { <span class="tok-prop">color</span>: <span class="tok-val">#fff</span>; }</pre></div>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section id="links">
+      <div class="sec-head"><span class="sec-num">07</span><h2>تنسيق الروابط — Hyperlinks Styling</h2></div>
+      <div class="card">
+        <div class="grid grid-2">
+          <ul style="padding-right:18px; display:flex; flex-direction:column; gap:10px; font-size:.9rem; color:var(--muted);">
+            <li><code style="color:var(--teal)">a:link</code> — الروابط العادية التي لم تُزَر بعد.</li>
+            <li><code style="color:var(--teal)">a:visited</code> — الروابط التي زارها المستخدم.</li>
+            <li><code style="color:var(--teal)">a:hover</code> — عند مرور الماوس فوق الرابط.</li>
+            <li><code style="color:var(--teal)">a:active</code> — عند النقر على الرابط (النشط).</li>
+          </ul>
+          <div class="link-demo" style="display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:14px;">
+            <a href="javascript:void(0)">رابط تجريبي</a>
+            <span style="color:var(--muted); font-size:.75rem;">مرّر الماوس فوقه لترى a:hover</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 -->
+    <section id="specificity">
+      <div class="sec-head"><span class="sec-num">08</span><h2>أولويات المحددات — Specificity</h2></div>
+      <p class="sec-sub">عند تعارض الخواص، تفوز الأولوية الأعلى. اضغط كل مستوى لترى ترتيبه في «عين النسر».</p>
+      <div class="card">
+        <div class="specificity-wrap">
+          <div class="pyramid" id="pyramid">
+            <div class="prio" data-level="1"><span>#id <span class="rank">ID Selector</span></span><span class="rank">01</span></div>
+            <div class="prio" data-level="2"><span>.class / :pseudo <span class="rank">Class أو Pseudo-class</span></span><span class="rank">02</span></div>
+            <div class="prio" data-level="3"><span>p, div, li <span class="rank">Element Selector</span></span><span class="rank">03</span></div>
+            <div class="prio" data-level="4"><span>* <span class="rank">Universal Selector</span></span><span class="rank">04</span></div>
+          </div>
+          <div>
+            <svg class="eagle-eye" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="56" fill="none" stroke="#e3a438" stroke-opacity=".3" stroke-width="1.5"/>
+              <circle cx="60" cy="60" r="38" fill="none" stroke="#39c2ac" stroke-opacity=".35" stroke-width="1.5"/>
+              <circle id="eyeDot" cx="60" cy="60" r="9" fill="#e3a438"/>
+              <line x1="0" y1="60" x2="120" y2="60" stroke="#e3a438" stroke-opacity=".2"/>
+              <line x1="60" y1="0" x2="60" y2="120" stroke="#e3a438" stroke-opacity=".2"/>
+            </svg>
+            <p class="scope-hint">إذا تكرر نفس الـ Id، تُنفَّذ خصائص آخر Id مكتوب.</p>
+          </div>
+        </div>
+        <div class="talon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg>
+          <div class="line"></div>
+        </div>
+        <pre><span class="tok-sel">.author</span> { <span class="tok-prop">font-size</span>: <span class="tok-val">18px</span>; }
+<span class="tok-sel">#author</span> { <span class="tok-prop">font-size</span>: <span class="tok-val">20px</span>; } <span class="tok-cmt">/* يفوز — Id أقوى من Class */</span>
+<span class="tok-sel">p, li</span> { <span class="tok-prop">font-size</span>: <span class="tok-val">22px</span>; }</pre>
+      </div>
+    </section>
+
+    <!-- 09 -->
+    <section id="boxmodel">
+      <div class="sec-head"><span class="sec-num">09</span><h2>نموذج الصندوق — Box Model</h2></div>
+      <p class="sec-sub">يحدد كيفية ظهور العنصر وحجمه الفعلي في الصفحة.</p>
+      <div class="card">
+        <div class="boxmodel">
+          <div class="bm-visual">
+            <span class="bm-margin-label">Margin</span>
+            <div class="bm-border">
+              <span class="bm-border-label" style="position:static; display:block; margin-bottom:6px;">Border</span>
+              <div class="bm-padding">
+                <span class="bm-padding-label" style="position:static; display:block; margin-bottom:6px;">Padding</span>
+                <div class="bm-content">Content</div>
+              </div>
+            </div>
+          </div>
+          <div class="bm-legend">
+            <div><span class="dot" style="background:var(--gold)"></span> Margin — المسافة بين العنصر والعناصر المحيطة به.</div>
+            <div><span class="dot" style="background:var(--teal)"></span> Border — يحيط حول العنصر بالكامل.</div>
+            <div><span class="dot" style="background:var(--coral)"></span> Padding — المسافة بين المحتوى والحدود.</div>
+            <div><span class="dot" style="background:var(--text)"></span> Content — أي محتوى: نص، صورة، فيديو.</div>
+          </div>
+        </div>
+        <div class="talon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L14 10 L22 12 L14 14 L12 22 L10 14 L2 12 L10 10 Z"/></svg><div class="line"></div></div>
+        <div class="grid grid-2">
+          <pre><span class="tok-cmt">/* العرض الفعلي */</span>
+Actual width =
+  left border + left padding
+  + width + right padding + right border</pre>
+          <pre><span class="tok-cmt">/* الطول الفعلي */</span>
+Actual height =
+  top border + top padding
+  + height + bottom padding + bottom border
+<span class="tok-cmt">/* Margin لا يُحسب ضمن الحجم الفعلي */</span></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section id="spacing">
+      <div class="sec-head"><span class="sec-num">10</span><h2>Padding & Margin</h2></div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Padding — الهامش الداخلي</h3>
+          <p>المساحة بين محتوى العنصر وحدوده.</p>
+          <pre><span class="tok-prop">padding-top</span>: <span class="tok-val">10px</span>;
+<span class="tok-prop">padding-right</span>: <span class="tok-val">10px</span>;
+<span class="tok-prop">padding-bottom</span>: <span class="tok-val">10px</span>;
+<span class="tok-prop">padding-left</span>: <span class="tok-val">10px</span>;
+
+<span class="tok-cmt">/* مختصرة: أعلى يمين أسفل يسار */</span>
+<span class="tok-prop">padding</span>: <span class="tok-val">top right bottom left</span>;</pre>
+        </div>
+        <div class="card">
+          <h3>Margin — الهامش الخارجي</h3>
+          <p>المساحة بين العنصر والعناصر المحيطة به.</p>
+          <pre><span class="tok-prop">margin-top</span>: <span class="tok-val">10px</span>;
+<span class="tok-prop">margin-right</span>: <span class="tok-val">10px</span>;
+<span class="tok-prop">margin-bottom</span>: <span class="tok-val">10px</span>;
+<span class="tok-prop">margin-left</span>: <span class="tok-val">10px</span>;
+
+<span class="tok-cmt">/* توسيط الصفحة: هامش تلقائي يمين ويسار */</span>
+<span class="tok-prop">margin</span>: <span class="tok-val">0 auto</span>;</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section id="display">
+      <div class="sec-head"><span class="sec-num">11</span><h2>أنواع الصناديق — Display</h2></div>
+      <div class="grid grid-3">
+        <div class="card">
+          <h3>Block</h3>
+          <p>يأخذ كل المساحة المتاحة حتى لو لم يحتجها. مثل: h1, p, li.</p>
+          <div class="disp-demo disp-block"><div class="box">block</div><div class="box">block</div></div>
+          <pre style="margin-top:14px"><span class="tok-prop">display</span>: <span class="tok-val">block</span>;</pre>
+        </div>
+        <div class="card">
+          <h3>Inline</h3>
+          <p>يأخذ مساحة قدر النص أو المحتوى فقط. مثل: strong, a, button.</p>
+          <div class="disp-demo disp-inline"><span class="box">inline</span><span class="box">inline</span></div>
+          <pre style="margin-top:14px"><span class="tok-prop">display</span>: <span class="tok-val">inline</span>;</pre>
+        </div>
+        <div class="card">
+          <h3>Inline-block</h3>
+          <p>يأخذ مساحة قدر محتواه، لكنه يقبل خواص Block مثل width و height.</p>
+          <div class="disp-demo disp-inlineblock"><span class="box">1</span><span class="box">2</span><span class="box">3</span></div>
+          <pre style="margin-top:14px"><span class="tok-prop">display</span>: <span class="tok-val">inline-block</span>;</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section id="position">
+      <div class="sec-head"><span class="sec-num">12</span><h2>Position</h2></div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>التدفق الطبيعي — Normal Flow</h3>
+          <p>الوضع الافتراضي (Default)، يعتمد على ترتيب العنصر في الصفحة كما هو مكتوب.</p>
+          <pre><span class="tok-prop">position</span>: <span class="tok-val">relative</span>;</pre>
+        </div>
+        <div class="card">
+          <h3>التموضع المطلق — Absolute</h3>
+          <p>يُخرج العنصر من التدفق الطبيعي ولا يلتزم بأي قوانين، ويبحث عن أقرب أب يملك <code>position: relative</code> ليلتزم بحدوده.</p>
+          <pre><span class="tok-prop">position</span>: <span class="tok-val">absolute</span>;
+<span class="tok-prop">top</span>: <span class="tok-val">5px</span>;
+<span class="tok-prop">left</span>: <span class="tok-val">5px</span>;</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section id="pseudoelement">
+      <div class="sec-head"><span class="sec-num">13</span><h2>العناصر الزائفة — Pseudo Elements</h2></div>
+      <div class="grid grid-2">
+        <div class="card"><h3>::first-letter</h3><p>تحديد أول حرف في العنصر.</p><pre><span class="tok-sel">h2::first-letter</span> { <span class="tok-prop">font-size</span>: <span class="tok-val">30px</span>; }</pre></div>
+        <div class="card"><h3>::first-line</h3><p>تحديد أول سطر في العنصر.</p><pre><span class="tok-sel">p::first-line</span> { <span class="tok-prop">color</span>: <span class="tok-val">red</span>; }</pre></div>
+        <div class="card"><h3>::after</h3><p>إدخال محتوى (نص/أيقونة) بعد محتوى العنصر.</p><pre><span class="tok-sel">p::after</span> { <span class="tok-prop">content</span>: <span class="tok-str">"Trending"</span>; }</pre></div>
+        <div class="card"><h3>::before</h3><p>إدخال محتوى (نص/أيقونة) قبل محتوى العنصر.</p><pre><span class="tok-sel">p::before</span> { <span class="tok-prop">content</span>: <span class="tok-str">"Trending"</span>; }</pre></div>
+      </div>
+    </section>
+
+    <!-- 14 -->
+    <section id="rtl">
+      <div class="sec-head"><span class="sec-num">14</span><h2>النسخة العربية — RTL</h2></div>
+      <div class="card">
+        <p>لعمل نسخة عربية من الصفحة، نتعامل مع HTML كما هي ونغيّر فقط <code style="color:var(--teal)">dir="rtl"</code> ونربطها بملف CSS. المشاكل الشائعة (مثل اتجاه الهوامش) تُحل بتحويل <code>margin-left</code> إلى <code>margin-right</code> والعكس.</p>
+        <pre><span class="tok-tag">&lt;html</span> <span class="tok-prop">dir</span>=<span class="tok-str">"rtl"</span><span class="tok-tag">&gt;</span>
+
+<span class="tok-cmt">/* في ملف CSS */</span>
+<span class="tok-sel">[dir=rtl] selector</span> {
+  <span class="tok-cmt">/* تُنفَّذ فقط عندما تكون الصفحة rtl */</span>
+}</pre>
+      </div>
+    </section>
+
+    <footer>
+      <div>EAGLE<span style="color:var(--gold)">.CSS</span> — ملخص تفاعلي مبني من مصدر: CSS Fundamentals</div>
+      <div class="fmono">design system: navy · gold · teal</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // mobile sidebar toggle
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('menuToggle');
+  toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+  document.querySelectorAll('#navlist a').forEach(a=>{
+    a.addEventListener('click', ()=> sidebar.classList.remove('open'));
+  });
+
+  // active nav highlight on scroll
+  const sections = document.querySelectorAll('main section');
+  const navLinks = document.querySelectorAll('#navlist a');
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        navLinks.forEach(l=>l.classList.remove('active'));
+        const link = document.querySelector(`#navlist a[href="#${entry.target.id}"]`);
+        if(link) link.classList.add('active');
+      }
+    });
+  }, {rootMargin:'-20% 0px -70% 0px'});
+  sections.forEach(s=>obs.observe(s));
+
+  // color swatches
+  const swatches = [
+    {label:'rgb(0,255,255)', css:'rgb(0,255,255)'},
+    {label:'rgb(244,179,63)', css:'rgb(244,179,63)'},
+    {label:'rgba(0,255,255,.3)', css:'rgba(0,255,255,.3)'},
+    {label:'#00ffff', css:'#00ffff'},
+    {label:'#e3a438', css:'#e3a438'},
+    {label:'#39c2ac', css:'#39c2ac'},
+  ];
+  const row = document.getElementById('swatchRow');
+  swatches.forEach(s=>{
+    const el = document.createElement('div');
+    el.className='swatch';
+    el.innerHTML = `<div class="box" style="background:${s.css}"></div>${s.label}`;
+    row.appendChild(el);
+  });
+
+  // specificity pyramid interaction
+  const prios = document.querySelectorAll('.prio');
+  const eyeDot = document.getElementById('eyeDot');
+  const eyeColors = ['#e3a438','#39c2ac','#e2665a','#93a3b2'];
+  prios.forEach(p=>{
+    p.addEventListener('click', ()=>{
+      prios.forEach(x=>x.classList.remove('win'));
+      p.classList.add('win');
+      const lvl = p.dataset.level;
+      eyeDot.setAttribute('fill', eyeColors[lvl-1]);
+      eyeDot.setAttribute('r', 13 - lvl);
+    });
+  });
+  prios[0].classList.add('win');
+</script>
+</body>
+</html>
